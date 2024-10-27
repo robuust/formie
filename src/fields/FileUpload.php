@@ -109,6 +109,14 @@ class FileUpload extends ElementField
             unset($config['restrictLocation']);
         }
 
+        // Setup defaults from the plugin-level
+        /* @var Settings $settings */
+        $settings = Formie::$plugin->getSettings();
+
+        if (!isset($config['uploadLocationSource'])) {
+            $config['uploadLocationSource'] = $settings->defaultFileUploadVolume ?? null;
+        }
+
         parent::__construct($config);
     }
 
