@@ -82,7 +82,7 @@ class MigrateController extends Controller
             $formIds = [];
 
             foreach ($formHandles as $formHandle) {
-                $formIds[] = Freeform::getInstance()->forms->getFormByHandle($formHandle)->id;
+                $formIds[] = Freeform::getInstance()->forms->getFormByHandle($formHandle)->getId();
             }
         }
 
