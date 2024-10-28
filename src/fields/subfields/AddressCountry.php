@@ -2,9 +2,11 @@
 namespace verbb\formie\fields\subfields;
 
 use verbb\formie\base\SubFieldInnerFieldInterface;
+use verbb\formie\elements\Submission;
 use verbb\formie\fields\Dropdown;
 use verbb\formie\helpers\ArrayHelper;
 use verbb\formie\helpers\SchemaHelper;
+use verbb\formie\models\Notification;
 
 use Craft;
 use craft\base\ElementInterface;
@@ -77,6 +79,11 @@ class AddressCountry extends Dropdown implements SubFieldInnerFieldInterface
         }
 
         return $options;
+    }
+
+    public function getValueForVariable(mixed $value, Submission $submission, Notification $notification): mixed
+    {
+        return $this->_getValueLabel($value);
     }
 
     public function defineGeneralSchema(): array
