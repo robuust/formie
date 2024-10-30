@@ -102,7 +102,7 @@ class NamePrefix extends Dropdown implements SubFieldInnerFieldInterface
     private function _getValueLabel(mixed $value): string
     {
         if ($value) {
-            if ($prefixOption = ArrayHelper::firstWhere($this->getDefaultOptions(), 'value', $value)) {
+            if ($prefixOption = ArrayHelper::firstWhere($this->options(), 'value', $value)) {
                 return $prefixOption['label'] ?? '';
             }
         }
