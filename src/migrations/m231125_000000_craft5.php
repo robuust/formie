@@ -62,6 +62,9 @@ class m231125_000000_craft5 extends BaseContentRefactorMigration
         // Migrate any relations via element field to store their content in the content table, not in `relations`
         $this->_migrateRelationFields();
 
+        // Migrate any payment data referring to old fields before they're deleted
+        $this->_migratePaymentFields();
+
         // Update synced fields to new format
         $this->_updateSyncFields();
 
@@ -736,6 +739,86 @@ class m231125_000000_craft5 extends BaseContentRefactorMigration
                 }
             }
         }
+    }
+
+    private function _migratePaymentFields(): void
+    {
+        $this->dropForeignKeyIfExists(Table::FORMIE_PAYMENTS, ['fieldId']);
+        $this->dropForeignKeyIfExists(Table::FORMIE_SUBSCRIPTIONS, ['fieldId']);
+
+        $oldFields = (new Query())->from('{{%fields}}')->where(['type' => 'verbb\\formie\\fields\\formfields\\Payment'])->all();
+
+        $fieldMap = [];
+
+        // Get a map of old to new fields first
+        foreach ($oldFields as $oldField) {
+            // Handle top-level fields
+            if (str_contains($oldField['context'], 'formie:')) {
+                $formUid = str_replace('formie:', '', $oldField['context']);
+                $form = (new Query())->from(Table::FORMIE_FORMS)->where(['uid' => $formUid])->one();
+
+                if ($form) {
+                    $newField = (new Query())->from(Table::FORMIE_FIELDS)->where(['layoutId' => $form['layoutId'], 'handle' => $oldField['handle']])->one();
+
+                    if ($newField) {
+                        $fieldMap[$oldField['id']] = $newField['id'];
+                    }
+                }
+            }
+
+            // Handle nested fields
+            if (str_contains($oldField['context'], 'formieField:')) {
+                $oldNestedFieldUid = str_replace('formieField:', '', $oldField['context']);
+                $oldNestedField = (new Query())->from('{{%fields}}')->where(['uid' => $oldNestedFieldUid])->one();
+
+                if ($oldNestedField) {
+                    $formUid = str_replace('formie:', '', $oldNestedField['context']);
+                    $form = (new Query())->from(Table::FORMIE_FORMS)->where(['uid' => $formUid])->one();
+
+                    if ($form) {
+                        $newNestedField = (new Query())->from(Table::FORMIE_FIELDS)->where(['layoutId' => $form['layoutId'], 'handle' => $oldNestedField['handle']])->one();
+
+                        if ($newNestedField) {
+                            $nestedFieldSettings = Json::decode($newNestedField['settings']);
+                            $nestedLayoutId = $nestedFieldSettings['nestedLayoutId'] ?? null;
+
+                            if ($nestedLayoutId) {
+                                $newField = (new Query())->from(Table::FORMIE_FIELDS)->where(['layoutId' => $nestedLayoutId, 'handle' => $oldField['handle']])->one();
+
+                                if ($newField) {
+                                    $fieldMap[$oldField['id']] = $newField['id'];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Migrate old `fieldId` to new `fieldId`.
+        $payments = (new Query())->from(Table::FORMIE_PAYMENTS)->all();
+
+        foreach ($payments as $payment) {
+            $oldFieldId = $payment['fieldId'];
+            $newFieldId = $fieldMap[$oldFieldId] ?? null;
+
+            // Update the row even if null
+            $this->update(Table::FORMIE_PAYMENTS, ['fieldId' => $newFieldId], ['id' => $payment['id']]);
+        }
+
+        // Migrate old `fieldId` to new `fieldId`.
+        $subscriptions = (new Query())->from(Table::FORMIE_SUBSCRIPTIONS)->all();
+
+        foreach ($subscriptions as $subscription) {
+            $oldFieldId = $subscription['fieldId'];
+            $newFieldId = $fieldMap[$oldFieldId] ?? null;
+
+            // Update the row even if null
+            $this->update(Table::FORMIE_SUBSCRIPTIONS, ['fieldId' => $newFieldId], ['id' => $subscription['id']]);
+        }
+
+        $this->addForeignKey(null, Table::FORMIE_PAYMENTS, ['fieldId'], Table::FORMIE_FIELDS, ['id'], 'CASCADE', null);
+        $this->addForeignKey(null, Table::FORMIE_SUBSCRIPTIONS, ['fieldId'], Table::FORMIE_FIELDS, ['id'], 'RESTRICT', null);
     }
 
     private function _getAddressConfig(array $settings): array
