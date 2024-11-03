@@ -377,7 +377,7 @@ class Fields extends Component
                 $pageFields = [];
 
                 $fields = $page->getFields();
-                ArrayHelper::multisort($fields, 'name', SORT_ASC, SORT_STRING);
+                ArrayHelper::multisort($fields, 'label', SORT_ASC, SORT_STRING);
 
                 foreach ($fields as $field) {
                     // Only include one instance of a synced field.
@@ -401,7 +401,7 @@ class Fields extends Component
             ];
         }
 
-        ArrayHelper::multisort($allFields, 'name', SORT_ASC, SORT_STRING);
+        ArrayHelper::multisort($allFields, 'label', SORT_ASC, SORT_STRING);
 
         array_unshift($existingFields, [
             'key' => '*',
