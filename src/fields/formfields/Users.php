@@ -183,6 +183,9 @@ class Users extends CraftUsers implements FormFieldInterface
     {
         $query = User::find();
 
+        // Only return users that are active
+        $query->status(User::STATUS_ACTIVE);
+
         if ($this->sources !== '*') {
             $criteria = [];
 
@@ -243,6 +246,7 @@ class Users extends CraftUsers implements FormFieldInterface
             'query' => $query,
             'field' => $this,
         ]);
+        
         $this->trigger(self::EVENT_MODIFY_ELEMENT_QUERY, $event);
 
         return $event->query;
