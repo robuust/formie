@@ -132,7 +132,7 @@ abstract class ElementField extends Field implements ElementFieldInterface
         $config = parent::getFormBuilderConfig();
         $config['isElementField'] = true;
 
-        return $this->modifyFieldSettings($config);
+        return $config;
     }
 
     public function isValueEmpty(mixed $value, ?ElementInterface $element): bool

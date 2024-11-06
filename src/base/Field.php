@@ -761,6 +761,9 @@ abstract class Field extends SavableComponent implements CraftFieldInterface, Fi
             'settings' => $this->getFormBuilderSettings(),
         ];
 
+        // Allow fields to modify the settings
+        $config = $this->modifyFieldSettings($config);
+
         // Fire a 'modifyFieldConfig' event
         $event = new ModifyFieldConfigEvent([
             'config' => $config,
@@ -781,6 +784,11 @@ abstract class Field extends SavableComponent implements CraftFieldInterface, Fi
         $settings['handle'] = $this->handle;
         $settings['sortOrder'] = $this->sortOrder;
 
+        return $settings;
+    }
+
+    public function modifyFieldSettings(array $settings): array
+    {
         return $settings;
     }
 
