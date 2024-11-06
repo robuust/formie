@@ -30,6 +30,7 @@ use verbb\formie\positions\AboveInput;
 use verbb\formie\positions\BelowInput;
 use verbb\formie\positions\Hidden as HiddenPosition;
 use verbb\formie\records\Field as FieldRecord;
+use verbb\formie\validators\HandleValidator;
 
 use Craft;
 use craft\base\ElementInterface;
@@ -45,7 +46,6 @@ use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
 use craft\helpers\Json;
 use craft\helpers\Template;
-use craft\validators\HandleValidator;
 use craft\validators\UniqueValidator;
 
 use GraphQL\Type\Definition\Type;
@@ -1442,6 +1442,22 @@ abstract class Field extends SavableComponent implements CraftFieldInterface, Fi
         return $names;
     }
 
+    public function getReservedHandles(): array
+    {
+        try {
+            // Add public properties from submission class
+            $reflection = new ReflectionClass(Submission::class);
+
+            $handles = array_map(function($prop) {
+                return $prop->name;
+            }, $reflection->getProperties(ReflectionProperty::IS_PUBLIC));
+        } catch (Throwable $e) {
+            $handles = [];
+        }
+
+        return $handles;
+    }
+
 
     // Protected Methods
     // =========================================================================
@@ -1451,14 +1467,8 @@ abstract class Field extends SavableComponent implements CraftFieldInterface, Fi
         $rules = parent::defineRules();
 
         $rules[] = [['label', 'handle'], 'required'];
-
         $rules[] = [['placeholder', 'errorMessage', 'cssClasses'], 'string', 'max' => 255];
-
-        $rules[] = [
-            ['handle'],
-            HandleValidator::class,
-            'reservedWords' => self::_getReservedWords(),
-        ];
+        $rules[] = [['handle'], HandleValidator::class, 'reservedWords' => $this->getReservedHandles()];
 
         $rules[] = [
             ['handle'],
@@ -1734,31 +1744,6 @@ abstract class Field extends SavableComponent implements CraftFieldInterface, Fi
 
     // Private Methods
     // =========================================================================
-
-    private static function _getReservedWords(): array
-    {
-        $reservedWords = [
-            ['form', 'field', 'submission', 'status'],
-        ];
-
-        try {
-            // Add public properties from submission class
-            $reflection = new ReflectionClass(Submission::class);
-            $reservedWords[] = array_map(function($prop) {
-                return $prop->name;
-            }, $reflection->getProperties(ReflectionProperty::IS_PUBLIC));
-
-            // Add public properties from form class
-            $reflection = new ReflectionClass(Form::class);
-            $reservedWords[] = array_map(function($prop) {
-                return $prop->name;
-            }, $reflection->getProperties(ReflectionProperty::IS_PUBLIC));
-        } catch (Throwable $e) {
-
-        }
-
-        return array_values(array_unique(array_merge(...$reservedWords)));
-    }
 
     private function _valueSql(?string $key): ?string
     {

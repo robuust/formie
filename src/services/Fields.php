@@ -1025,23 +1025,7 @@ class Fields extends Component
 
     public function getReservedHandles(): array
     {
-        try {
-            // Grab the reserved handles from Craft's base field class, which is a pain to fetch
-            $class = new ReflectionClass(Field::class);
-            $method = $class->getMethod('defineRules');
-            $method->setAccessible(true);
-            $rule = ArrayHelper::firstWhere($method->invoke(new PlainText()), function($rule) {
-                return $rule[1];
-            }, HandleValidator::class);
-
-            $reservedWords = $rule['reservedWords'];
-        } catch (ReflectionException $e) {
-            $reservedWords = [];
-        }
-
-        $handles = array_merge($reservedWords, HandleValidator::$baseReservedWords);
-
-        return array_values(array_unique($handles));
+        return (new formiefields\SingleLineText())->getReservedHandles();
     }
 
 
