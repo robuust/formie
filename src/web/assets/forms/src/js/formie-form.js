@@ -162,8 +162,16 @@ Craft.Formie.EditForm = Garnish.Base.extend({
                 },
 
                 getFormData(options = {}) {
-                    const formElem = this.getFormElement();
-                    const data = new FormData(formElem);
+                    const formElement = this.getFormElement();
+                    const formData = new FormData(formElement);
+                    const data = new FormData();
+
+                    // Filter out empty integration field mapping values, to keep payload size down
+                    for (const [key, value] of formData.entries()) {
+                        if (!(key.startsWith('settings[integrations]') && value === '')) {
+                            data.append(key, value);
+                        }
+                    }
 
                     // Quick-n-easy clone
                     const pageData = clone(this.form.pages);
