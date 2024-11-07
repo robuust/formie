@@ -332,6 +332,11 @@ abstract class Payment extends Integration
         return $default;
     }
 
+    public function modifyFieldSettings(array $settings): array
+    {
+        return $settings;
+    }
+
     public function defineHtmlTag(string $key, array $context = []): ?HtmlTag
     {
         return null;

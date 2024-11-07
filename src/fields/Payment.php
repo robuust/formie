@@ -70,6 +70,15 @@ class Payment extends Field
         }
     }
 
+    public function modifyFieldSettings(array $settings): array
+    {
+        if ($integration = $this->getPaymentIntegration()) {
+            return $integration->modifyFieldSettings($settings);
+        }
+
+        return $settings;
+    }
+
     public function normalizeValue(mixed $value, ?ElementInterface $element): mixed
     {
         $value = parent::normalizeValue($value, $element);
