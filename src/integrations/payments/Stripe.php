@@ -638,6 +638,11 @@ class Stripe extends Payment
             }
         }
 
+        // Check the form settings for what needs to be done, as we're returning from offssite
+        if ($form && ($redirect = $form->getRedirectUrl())) {
+            $origin = $redirect;
+        }
+
         return Craft::$app->getResponse()->redirect($origin);
     }
 
