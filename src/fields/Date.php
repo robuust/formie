@@ -438,6 +438,11 @@ class Date extends SubField implements PreviewableFieldInterface, SortableFieldI
         foreach ($this->getFields() as $field) {
             $fieldKey = $field->fieldKey;
 
+            // No need to validate if the field is conditionally hidden or disabled
+            if ($field->isConditionallyHidden($element) || $field->getIsDisabled()) {
+                continue;
+            }
+
             // Roll our own validation, due to lack of field layout and elements
             $attribute = "field:$fieldKey";
             $isEmpty = fn() => $field->isValueEmpty($value, $element);
