@@ -99,10 +99,13 @@ class IterableIntegration extends Crm
 
                 $userPayload = [
                     'email' => $email,
-                    'dataFields' => $this->_prepCustomFields($userValues),
                     'preferUserId' => true,
                     'mergeNestedObjects' => true,
                 ];
+
+                if ($customFields = $this->_prepCustomFields($userValues)) {
+                    $userPayload['dataFields'] = $customFields;
+                }
 
                 $response = $this->deliverPayload($submission, 'users/update', $userPayload);
 
