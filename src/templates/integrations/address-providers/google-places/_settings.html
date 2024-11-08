@@ -29,17 +29,6 @@
 }) }}
 
 {{ macros.proxyField(fieldVariables, 'autosuggestField', {
-    label: 'API Key' | t('formie'),
-    instructions: 'Enter your {name} {label} here.' | t('formie'),
-    name: 'apiKey',
-    required: true,
-    suggestEnvVars: true,
-    value: integration.settings.apiKey ?? '',
-    warning: macros.configWarning('apiKey', 'formie'),
-    errors: integration.getErrors('apiKey'),
-}) }}
-
-{{ macros.proxyField(fieldVariables, 'autosuggestField', {
     label: 'Geocoding API Key' | t('formie'),
     instructions: 'Enter your {name} {label} here, if different to your API Key.' | t('formie'),
     name: 'geocodingApiKey',
