@@ -273,19 +273,26 @@ class Date extends SubField implements PreviewableFieldInterface, SortableFieldI
 
     public function getPreviewHtml(mixed $value, ElementInterface $element): string
     {
-        if ($value && $this->getIsDateTime()) {
-            return Craft::$app->getFormatter()->asDatetime($value, Locale::LENGTH_SHORT);
+        $html = '';
+        
+        // Ensure that the timezone we use is UTC, as the dates are set in that. We don't want them converted
+        $timeZone = Craft::$app->getFormatter()->timeZone;
+        Craft::$app->getFormatter()->timeZone = 'UTC';
+
+        if ($value) {
+            if ($this->getIsDateTime()) {
+                $html = Craft::$app->getFormatter()->asDatetime($value, Locale::LENGTH_SHORT);
+            } else if ($this->getIsTime()) {
+                $html = Craft::$app->getFormatter()->asTime($value, Locale::LENGTH_SHORT);
+            } else if ($this->getIsDate()) {
+                $html = Craft::$app->getFormatter()->asDate($value, Locale::LENGTH_SHORT);
+            }
         }
 
-        if ($value && $this->getIsTime()) {
-            return Craft::$app->getFormatter()->asTime($value, Locale::LENGTH_SHORT);
-        }
+        // Set the original timezone back, just in case
+        Craft::$app->getFormatter()->timeZone = $timeZone;
 
-        if ($value && $this->getIsDate()) {
-            return Craft::$app->getFormatter()->asDate($value, Locale::LENGTH_SHORT);
-        }
-
-        return '';
+        return $html;
     }
 
     public function normalizeValue(mixed $value, ?ElementInterface $element): mixed
