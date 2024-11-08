@@ -118,12 +118,15 @@ class IterableIntegration extends EmailMarketing
                 'subscribers' => [
                     [
                         'email' => $email,
-                        'dataFields' => $this->_prepCustomFields($fieldValues),
                         'preferUserId' => true,
                         'mergeNestedObjects' => true,
                     ],
                 ],
             ];
+
+            if ($customFields = $this->_prepCustomFields($fieldValues)) {
+                $payload['subscribers'][0]['dataFields'] = $customFields;
+            }
 
             $response = $this->deliverPayload($submission, 'lists/subscribe', $payload);
 
