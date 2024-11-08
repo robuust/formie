@@ -158,11 +158,17 @@ abstract class ElementField extends Field implements ElementFieldInterface
         }
 
         if (is_array($value)) {
-            if ($ids = ArrayHelper::getColumn($value, 'id')) {
-                $query->id($ids)->fixedOrder();
-            } else {
-                $query->id(array_values(array_filter($value)))->fixedOrder();
+            // Check if the array contains associative arrays with an 'id' key
+            if (isset($value[0]) && is_array($value[0]) && array_key_exists('id', $value[0])) {
+                $value = ArrayHelper::getColumn($value, 'id');
             }
+
+            // Cleanup to ensure only valid IDs
+            $ids = array_values(array_filter($value, function($id) {
+                return !empty($id);
+            }));
+
+            $query->id($ids)->fixedOrder();
         } else {
             $query->id(false);
         }
