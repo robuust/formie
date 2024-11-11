@@ -44,6 +44,12 @@ abstract class NestedField extends Field implements NestedFieldInterface
     // Static Methods
     // =========================================================================
 
+    public static function lowerDisplayName(): string
+    {
+        // Legacy setting for Craft 5 migration. Remove at the next breakpoint
+        return StringHelper::toLowerCase(static::displayName());
+    }
+
     public static function queryCondition(array $instances, mixed $value, array &$params): ?array
     {
         $param = QueryParam::parse($value);
