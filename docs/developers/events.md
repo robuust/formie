@@ -1959,20 +1959,21 @@ Event::on(MicrosoftDynamics365::class, MicrosoftDynamics365::EVENT_MODIFY_REQUIR
 ```
 
 ### The `modifyTargetSchemas` event
-The event that is triggered to allow modification of the target schemas when populating lookup/relational fields.
+The event that is triggered to allow modification of the target schemas when populating lookup/relational fields in the field mapping.
 
-Formie populates lookup/relational field values of the common standard entities, but this event gives you a chance to modify the standard entities along with populating any custom entities in the mapping.
+By default Formie populates lookup/relational field values of entities discovered from the metadata of the Microsoft Dynamics 365 environment, but this event gives you a chance to modify both standard and custom entities to customise the values shown in the field mapping.
 
-Any modifications made to the standard entities such as `systemuser` or `campaign` will be merged and overwritten with the values from the event.
+Any modifications made to the standard entities such as `systemuser` or `campaign` will be merged, the values set in this event take priority.
 
-The following additional parameters are available for each entity:
+The following additional parameters are available for each entity for further customisation:
 
-* `expand` - For more complex queries related to one or more entities
-* `filter` - Specify a filter to modify the returned values
-* `limit` - Set the amount of values to return (defaults to 100 if not specifically set)
-* `orderby` - Order the returned values by a specific criteria e.g. `name asc`
+* `expand` - For performing more complex queries related to one or more entities.
+* `filter` - Specify a filter criteria to modify the returned values.
+* `limit` - Set the amount of values to return (defaults to 100 if not specifically set).
+* `orderby` - Order the returned values by a specific criteria e.g. `name asc`.
+* `select` - Array of values to return in the lookup e.g. `['fullname', 'systemuserid']`
 
-When using the `limit` option. Be mindful of the performance impact when refreshing the integration.
+When using the `limit` option and increasing the amount of values returned, be mindful of the performance impact when refreshing the integration.
 
 ```php
 use verbb\formie\events\MicrosoftDynamics365TargetSchemasEvent;
@@ -1981,20 +1982,19 @@ use yii\base\Event;
 
 Event::on(MicrosoftDynamics365::class, MicrosoftDynamics365::EVENT_MODIFY_TARGET_SCHEMAS, function(MicrosoftDynamics365TargetSchemasEvent $event) {
     $event->targetSchemas = [
+        // Filter to modify the returned values for the systemuser entity
         'systemuser' => [
-            // Filter to modify the returned values
             'filter' => 'isdisabled eq false and invitestatuscode eq 4 or accessmode eq 4',
         ],
-        // Set the order to be something more logical for this entity and allow more than 100 values
+        // Set the orderby criteria be something more logical for this entity and allow more than 100 values
         'campaign' => [
             'orderby' => 'createdon desc',
-            'limit' => '150'
+            'limit' => 150
         ],
-        // A custom entity
+        // A custom entity with a custom orderby and filter
         'ccl1000_enquirytype' => [
-            'entity' => 'ccl1000_enquirytypes',
-            'label' => 'ccl1000_name',
-            'value' => 'ccl1000_enquirytypeid'
+            'orderby' => 'ccl1000_name asc',
+            'filter' => 'statecode eq 0',
         ]
     ];
 });
