@@ -1,5 +1,48 @@
 # Changelog
 
+## 3.0.10 - 2024-11-13
+
+### Changed
+- Add the ability for Payment integration classes to modify the settings of the Payment field.
+- Add `Field::modifyFieldSettings()`.
+- Add the ability to use Twig in `style` attribute for Theme Config.
+
+### Changed
+- Update proxy URL for some integrations.
+
+### Fixed
+- Fix duplicated API Key setting for Google Places.
+- Fix Iterable integrations when not mapping custom fields.
+- Fix reactivity of integration field mapping for forms.
+- Fix some integrations causing `post_max_size` and `input_max_vars` issues on Craft Cloud.
+- Fix inactive or pending users showing in users field.
+- Fix an error when migrating Freeform forms for a specific handle via the CLI.
+- Fix `data-repeater-row-id` attribute for Repeater field rows.
+- Fix Phone field not being mappable for Feed Me.
+- Fix an error with Elements fields.
+- Fix a Craft 5.5 compatibility issue.
+- Fix an error during Craft 5 migration.
+- Fix an error when setting the default value on an element field.
+- Fix Date dropdown and input fields not validating correctly.
+- Fix an error when ordering forms via the Page Count value.
+- Fix Date/Time field values in the submission index.
+- Fix Stripe offsite payments not redirecting correctly after callback.
+- Fix element fields and their default value throwing an error.
+- Fix element select fields not working correctly in some field/notification settings.
+- Fix Stripe not retaining some appearance settings.
+- Fix field validation including some handles that aren’t reserved.
+- Fix deprecation warning when adding an existing field.
+- Fix Formie 3 migration for payment fields.
+- Fix an error with Calculations fields when using a ternary operator expression.
+- Fix custom Name field Prefix values not showing in email notifications.
+- Fix cosmetic fields showing in email notifications.
+- Fix Address Country sub-field not working correctly for email notifications.
+- Fix an error when migrating Freeform forms for a specific handle via the CLI.
+- Fix “Default Date Display Type” setting.
+- Fix “Default File Upload Volume” plugin setting.
+- Fix single Name fields not showing their required indicator.
+- Fix an error when migrating Group and Repeater field content from Formie 2.
+
 ## 3.0.9 - 2024-10-20
 
 ### Added
