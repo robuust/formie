@@ -2,6 +2,7 @@
 namespace verbb\formie\base;
 
 use craft\base\ElementInterface;
+use craft\base\PreviewableFieldInterface;
 use craft\elements\db\ElementQueryInterface;
 use craft\enums\AttributeStatus;
 use craft\helpers\ElementHelper;
@@ -72,6 +73,23 @@ trait FieldLegacy
     public function getPreviewHtml(mixed $value, ElementInterface $element): string
     {
         return ElementHelper::attributeHtml($value);
+    }
+
+    public function previewPlaceholderHtml(mixed $value, ?ElementInterface $element): string
+    {
+        if (!$this instanceof PreviewableFieldInterface) {
+            return '';
+        }
+
+        if ($value !== null) {
+            return $value;
+        }
+
+        if ($element !== null) {
+            return $element->getFieldValue($this->handle);
+        }
+
+        return $this->getUiLabel();
     }
 
     public function getId(): ?int
