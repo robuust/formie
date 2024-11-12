@@ -366,6 +366,24 @@
 - `Field::name` attribute has been deprecated. Use `Field::label` instead.
 - `Field::inputHtml()` method has been deprecated. Use `Field::cpInputHtml()` instead.
 
+## 2.1.33 - 2024-11-13
+
+### Added
+- Add Iterable CRM integration.
+
+### Changed
+- Update proxy URL for some integrations.
+
+### Fixed
+- Fix duplicated API Key setting for Google Places.
+- Fix Iterable integrations when not mapping custom fields.
+- Fix reactivity of integration field mapping for forms.
+- Fix some integrations causing `post_max_size` and `input_max_vars` issues on Craft Cloud.
+- Fix inactive or pending users showing in users field.
+- Fix “Action on Submit” not toggling options correctly.
+- Fix an error when migrating Freeform forms for a specific handle via the CLI.
+- Fix `data-repeater-row-id` attribute for Repeater field rows.
+
 ## 2.1.32 - 2024-10-20
 
 ### Added
