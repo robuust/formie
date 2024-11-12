@@ -2,7 +2,7 @@
 
 ## 3.0.10 - 2024-11-13
 
-### Changed
+### Added
 - Add the ability for Payment integration classes to modify the settings of the Payment field.
 - Add `Field::modifyFieldSettings()`.
 - Add the ability to use Twig in `style` attribute for Theme Config.
