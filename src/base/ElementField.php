@@ -251,8 +251,13 @@ abstract class ElementField extends Field implements ElementFieldInterface
             }
         }
 
-        $query->limit($this->limitOptions);
-        $query->orderBy($this->orderBy);
+        if ($this->limitOptions) {
+            $query->limit($this->limitOptions);
+        }
+
+        if ($this->orderBy) {
+            $query->orderBy($this->orderBy);
+        }
 
         // Allow any template-defined elementQuery to override
         if ($this->elementsQuery) {
